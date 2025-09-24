@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Assignation des sièges</title>
+  <style>
+    .seat {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #333;
+      display: inline-block;
+      margin: 2px;
+      text-align: center;
+      line-height: 30px;
+      cursor: pointer;
+    }
+    .legend {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Assignation des sièges</h2>
+  <div id="seating"></div>
+
+  <div>
+    <label>École: <input type="text" id="schoolName"></label>
+    <label>Niveau: <input type="text" id="schoolLevel"></label>
+    <button onclick="assignSeat()">Assigner</button>
+  </div>
+
+  <div class="legend" id="legend">
+    <h3>Légende</h3>
+    <ul id="legendList"></ul>
+  </div>
+
+  <script>
+    const seating = document.getElementById('seating');
+    const legendList = document.getElementById('legendList');
+    const schools = {};
+    let selectedSeat = null;
+
+    for (let row of ['A','B','C']) {
+      for (let num = 1; num <= 10; num++) {
+        const seat = document.createElement('div');
+        seat.className = 'seat';
+        seat.textContent = row + num;
+        seat.dataset.seatId = row + num;
+        seat.onclick = () => {
+          selectedSeat = seat;
+          alert('Siège sélectionné : ' + seat.dataset.seatId);
+        };
+        seating.appendChild(seat);
+      }
+      seating.appendChild(document.createElement('br'));
+    }
+
+    function getRandomColor() {
+      return '#' + Math.floor(Math.random()*16777215).toString(16);
+    }
+
+    function assignSeat() {
+      const name = document.getElementById('schoolName').value;
+      const level = document.getElementById('schoolLevel').value;
+      if (!selectedSeat || !name || !level) return alert('Remplis tous les champs et sélectionne un siège.');
+
+      if (!schools[name]) {
+        schools[name] = { color: getRandomColor(), level };
+        const li = document.createElement('li');
+        li.textContent = `${name} (${level})`;
+        li.style.color = schools[name].color;
+        legendList.appendChild(li);
+      }
+
+      selectedSeat.style.backgroundColor = schools[name].color;
+      selectedSeat.title = `${name} (${level})`;
+    }
+  </script>
+</body>
+</html>
